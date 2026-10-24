@@ -2,194 +2,211 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a horizontal deck of full-screen slides; one idea per slide, generous whitespace, hairline rules, one warm accent. */
+/* Layout: a horizontal deck of full-screen slides on a dark stage; glowing glass bars stand on a perspective floor grid. Single dark look by design. */
 :root {
-  --bg: #f7f7f5;
-  --fg: #141414;
-  --muted: #85857f;
-  --line: #e3e2dd;
-  --soft: #eeede8;
-  --accent: #b4561f;
-  --good: #2f7a4c;
-  --bad: #b23a3a;
-  --c1: #141414; --c2: #b4561f; --c3: #a3a39c; --c4: #dcc9ae; --c5: #56695a; --c6: #cfcec8;
-  --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "Geist Mono", ui-monospace, Menlo, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #111110; --fg: #efeee9; --muted: #8d8c86; --line: #2a2a27; --soft: #1b1b19; --accent: #e08a4f;
-    --good: #6cc391; --bad: #ec7d7d;
-    --c1: #efeee9; --c2: #e08a4f; --c3: #7c7b76; --c4: #7a6448; --c5: #8fa892; --c6: #42423e;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #111110; --fg: #efeee9; --muted: #8d8c86; --line: #2a2a27; --soft: #1b1b19; --accent: #e08a4f;
-  --good: #6cc391; --bad: #ec7d7d;
-  --c1: #efeee9; --c2: #e08a4f; --c3: #7c7b76; --c4: #7a6448; --c5: #8fa892; --c6: #42423e;
+  --bg: #05070c;
+  --stage: #111a2b;
+  --fg: #f3f1ed;
+  --dim: #b9bfcb;
+  --muted: #7d8697;
+  --line: rgba(255, 255, 255, 0.09);
+  --soft: rgba(255, 255, 255, 0.035);
+  --accent: #ff8a2a;
+  --hero: #6aa5e0;
+  --good: #5fd39a;
+  --bad: #ff6b5e;
+  --c1: #ff8a2a; --c2: #6aa5e0; --c3: #ffc58a; --c4: #d0521c; --c5: #a9b8c8; --c6: #9a6436;
+  --sans: "Montserrat", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5; overflow: hidden; }
+body {
+  color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5; overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 108%, rgba(255, 120, 30, 0.22), transparent 70%),
+    radial-gradient(ellipse 90% 70% at 50% 0%, var(--stage), var(--bg) 75%);
+  background-color: var(--bg);
+}
 button, select, input, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-/* deck */
-.deck { position: relative; height: 100%; overflow: hidden; }
-.progress { position: absolute; inset: 0 0 auto; height: 2px; background: var(--line); z-index: 5; }
-.progress span { display: block; height: 100%; background: var(--accent); transition: width .5s cubic-bezier(.2,.7,.2,1); }
-.track { display: flex; height: 100%; transition: transform .6s cubic-bezier(.65,0,.25,1); }
+/* stage */
+.deck { position: relative; height: 100%; overflow: hidden; isolation: isolate; }
+.floor { position: absolute; left: -50%; right: -50%; bottom: 0; height: 34vh; z-index: -1; pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 150, 70, 0.22) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg, rgba(255, 150, 70, 0.12) 0 1px, transparent 1px 48px);
+  transform: perspective(260px) rotateX(62deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%); mask-image: linear-gradient(to top, #000 10%, transparent 85%); }
+.source { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); bottom: 110px; z-index: 4; transform: rotate(-90deg); transform-origin: 0 0;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.source b { color: var(--dim); font-weight: 500; }
+@media (max-width: 700px) { .source { display: none; } }
+.progress { position: absolute; inset: 0 0 auto; height: 1px; background: var(--line); z-index: 5; }
+.progress span { display: block; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width .5s cubic-bezier(.2,.7,.2,1); }
+.track { display: flex; height: 100%; transition: transform .7s cubic-bezier(.65,0,.25,1); }
 .track.instant { transition: none; }
 .slide {
   flex: 0 0 100%; height: 100%; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column;
-  padding-block: clamp(32px, 7vh, 80px) 104px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px), 6vw);
+  padding-block: clamp(32px, 7vh, 72px) 108px;
+  padding-left: max(28px, env(safe-area-inset-left, 0px), 6vw);
   padding-right: max(16px, env(safe-area-inset-right, 0px), 6vw);
 }
 .inner { margin: auto 0; width: 100%; max-width: 1160px; align-self: center; display: grid; gap: clamp(20px, 4vh, 40px); min-width: 0; }
 
 /* type */
-.eyebrow { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); font-weight: 500; }
-h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
-h1 { font-size: clamp(2.6rem, 7.5vw, 6rem); line-height: 0.98; letter-spacing: -0.035em; font-weight: 300; }
-h2 { font-size: clamp(1.7rem, 3.4vw, 2.6rem); line-height: 1.1; letter-spacing: -0.02em; }
-.lead { color: var(--muted); max-width: 52ch; margin: 0; font-size: 1.05rem; }
-.big { font-size: clamp(2.4rem, 5.6vw, 4.4rem); font-weight: 300; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
-.big .cur, .mid .cur { font-size: 0.42em; letter-spacing: 0.04em; color: var(--muted); margin-right: 0.25em; vertical-align: 0.6em; font-weight: 400; }
-.mid { font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.tag { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.tag i { font-style: normal; color: var(--accent); }
+h1, h2 { margin: 0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.01em; line-height: 1.12; text-wrap: balance; }
+h1 { font-size: clamp(1.7rem, 4.2vw, 3.1rem); }
+h2 { font-size: clamp(1.25rem, 2.6vw, 2rem); }
+.ruled { display: grid; gap: 14px; justify-items: start; }
+.ruled::after { content: ""; height: 1px; width: min(100%, 560px); background: linear-gradient(90deg, var(--accent), rgba(255, 138, 42, 0.15)); order: 2; }
+.ruled .cap { order: 3; }
+.ruled.center { justify-items: center; text-align: center; }
+.ruled.center::after { width: min(100%, 980px); background: linear-gradient(90deg, transparent, var(--accent) 15%, var(--accent) 85%, transparent); }
+.cap { margin: 0; font-weight: 200; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); font-size: clamp(0.95rem, 1.8vw, 1.35rem); line-height: 1.35; max-width: 46ch; text-wrap: balance; }
+.thin { font-weight: 200; letter-spacing: -0.01em; line-height: 1; font-variant-numeric: tabular-nums; }
+.big { font-size: clamp(2.6rem, 6vw, 4.6rem); }
+.mid { font-size: clamp(1.7rem, 3vw, 2.4rem); }
+.cur { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; color: var(--accent); margin-right: 0.6em; vertical-align: 0.4em; font-weight: 400; }
+.big .cur { font-size: 0.8rem; vertical-align: 1.6em; }
+.lbl { font-weight: 700; text-transform: uppercase; font-size: 0.82rem; letter-spacing: 0.04em; }
 .up { color: var(--good); } .down { color: var(--bad); }
-.hint { color: var(--muted); font-size: 0.85rem; }
+.hint { color: var(--muted); font-size: 0.8rem; font-family: var(--mono); letter-spacing: 0.02em; }
 
 .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 32px; }
-.head > div:first-child { display: grid; gap: 8px; min-width: 0; }
-.two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(24px, 5vw, 72px); align-items: center; }
+.head > div:first-child { min-width: 0; }
+.two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(24px, 5vw, 72px); align-items: end; }
 .two.rev { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
 @media (max-width: 860px) { .two, .two.rev { grid-template-columns: minmax(0, 1fr); } }
 
-/* chips & legend */
+/* chips */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 5px 12px; cursor: pointer; font-size: 0.84rem; display: inline-flex; align-items: center; gap: 8px; transition: background .15s, opacity .15s, border-color .15s; }
-.chip:hover { border-color: var(--muted); }
-.chip[aria-pressed="true"].year { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-.chip .dot { width: 8px; height: 8px; border-radius: 50%; }
-.chip.sec[aria-pressed="false"] { opacity: 0.4; }
-.chip.sec[aria-pressed="false"] .dot { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--muted); }
-
-/* cover */
-.cover { gap: clamp(28px, 6vh, 64px); }
-.cover-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; border-top: 1px solid var(--line); padding-top: 24px; }
-.pill { display: inline-flex; width: fit-content; font-size: 0.78rem; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--muted); }
-.pill.own { color: var(--good); }
-.kbd { font-family: var(--mono); font-size: 0.78rem; border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; }
+.chip { border: 1px solid var(--line); background: var(--soft); border-radius: 2px; padding: 5px 10px; cursor: pointer; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; color: var(--dim); transition: border-color .15s, color .15s, opacity .15s, box-shadow .15s; }
+.chip:hover { border-color: rgba(255, 255, 255, 0.3); color: var(--fg); }
+.chip.year[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 14px rgba(255, 138, 42, 0.25), inset 0 0 10px rgba(255, 138, 42, 0.12); }
+.dot { display: inline-block; width: 7px; height: 7px; flex: none; box-shadow: 0 0 8px currentColor; }
+.chip.sec[aria-pressed="false"] { opacity: 0.35; }
+.chip.sec[aria-pressed="false"] .dot { background: transparent !important; box-shadow: inset 0 0 0 1px var(--muted); }
 
 /* stats */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 clamp(20px, 3vw, 40px); }
-.stat { border-top: 1px solid var(--fg); padding-top: 16px; padding-bottom: 24px; display: grid; gap: 10px; align-content: start; min-width: 0; }
-.stat .note { color: var(--muted); font-size: 0.88rem; }
+.stat { position: relative; border-top: 1px solid var(--line); padding-top: 18px; padding-bottom: 26px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.stat::before { content: ""; position: absolute; top: -1px; left: 0; width: 36px; height: 1px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.stat .note { color: var(--muted); font-size: 0.8rem; font-family: var(--mono); }
 .stat .mid { overflow-wrap: anywhere; }
+.stat .name { font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.15; overflow-wrap: anywhere; }
 
 /* charts */
 svg { display: block; width: 100%; height: auto; overflow: visible; }
-svg text { fill: var(--muted); font-family: var(--mono); font-size: 11px; }
-svg .grid { stroke: var(--line); }
-svg .seg { stroke: var(--bg); stroke-width: 1.5; transform-box: fill-box; transform-origin: 50% 100%; transition: opacity .2s; }
-svg .col.dim .seg { opacity: 0.25; }
-svg .tot { fill: var(--fg); font-size: 12px; }
-svg .col.dim .tot { fill: var(--muted); }
+svg text { fill: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; }
+svg .grid { stroke: rgba(255, 255, 255, 0.06); stroke-dasharray: 2 4; }
+svg .base { stroke: rgba(255, 255, 255, 0.18); }
+svg .bar { transform-box: fill-box; transform-origin: 50% 100%; transition: opacity .25s; }
+svg .col.dim .bar, svg .col.dim .refl { opacity: 0.28; }
+svg .v { fill: var(--fg); font-family: var(--sans); font-weight: 200; font-size: 22px; letter-spacing: 0; }
+svg .n { fill: var(--fg); font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+svg .col.dim .v, svg .col.dim .n { fill: var(--muted); }
+svg .yl { font-size: 11px; }
+svg .col.sel .yl { fill: var(--accent); }
 svg .hit { fill: transparent; cursor: pointer; }
-svg .yl { font-size: 12px; }
-svg .col.sel .yl { fill: var(--fg); font-weight: 500; }
-.slide.enter .seg { animation: grow .8s cubic-bezier(.2,.7,.2,1) both; }
-.slide.enter .bar-h > span { animation: growx .8s cubic-bezier(.2,.7,.2,1) both; }
+.slide.enter .bar { animation: grow .9s cubic-bezier(.2,.7,.2,1) both; }
+.slide.enter .refl { animation: fade 1.2s ease both; }
+.slide.enter .bar-h > span { animation: growx .9s cubic-bezier(.2,.7,.2,1) both; }
 @keyframes grow { from { transform: scaleY(0); } }
 @keyframes growx { from { transform: scaleX(0); } }
+@keyframes fade { from { opacity: 0; } }
 
 /* lists */
 .rows { display: grid; }
 .row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto; gap: 20px; align-items: center; padding-block: 14px; border-bottom: 1px solid var(--line); }
 .row:first-child { border-top: 1px solid var(--line); }
-.row .name { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.row .name span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.row .name small { color: var(--muted); }
+.row .name { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.row .name > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .name small { color: var(--muted); font-family: var(--mono); font-size: 0.72rem; font-weight: 400; }
 .row .val { text-align: right; display: grid; justify-items: end; }
-.row .val small { color: var(--muted); font-size: 0.8rem; }
-.row.off { opacity: 0.35; }
-.bar-h { height: 6px; display: flex; gap: 2px; }
-.bar-h > span { height: 100%; transform-origin: left; border-radius: 1px; }
-.share { font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 300; letter-spacing: -0.02em; }
-.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.row .val small { color: var(--muted); font-size: 0.75rem; font-family: var(--mono); }
+.row.off { opacity: 0.3; }
+.bar-h { height: 4px; display: flex; gap: 3px; }
+.bar-h > span { height: 100%; transform-origin: left; box-shadow: 0 0 12px currentColor, 0 0 2px currentColor; }
+.share { font-size: clamp(1.5rem, 2.8vw, 2.1rem); font-weight: 200; }
 @media (max-width: 600px) { .row { grid-template-columns: minmax(0, 1fr) auto; } .row .bar-h { grid-column: 1 / -1; grid-row: 2; } }
 
 .panel { display: grid; gap: 18px; align-content: start; min-width: 0; }
-.kv { display: grid; gap: 0; }
-.kv > div { display: flex; justify-content: space-between; gap: 12px; padding-block: 9px; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
-.kv > div span:first-child { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+.kv { display: grid; }
+.kv > div { display: flex; justify-content: space-between; gap: 12px; padding-block: 9px; border-bottom: 1px solid var(--line); font-size: 0.86rem; }
+.kv > div > span:first-child { display: inline-flex; align-items: center; gap: 10px; color: var(--dim); }
+.kv > div > span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.new { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; color: var(--accent); border: 1px solid rgba(255, 138, 42, 0.5); padding: 0 6px; }
 
 /* table */
 .table-wrap { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
-th, td { padding: 10px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
-th:first-child, td:first-child { text-align: left; padding-left: 0; }
-thead th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 500; cursor: pointer; user-select: none; }
-thead th[aria-sort] { color: var(--fg); }
+table { border-collapse: collapse; width: 100%; font-size: 0.84rem; font-family: var(--mono); }
+th, td { padding: 11px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; font-family: var(--sans); }
+td:first-child { font-weight: 500; }
+thead th { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); font-weight: 400; cursor: pointer; user-select: none; font-family: var(--mono) !important; }
+thead th[aria-sort] { color: var(--accent); }
 tr.main { cursor: pointer; }
 tr.main:hover td { background: var(--soft); }
-tr.detail td { color: var(--muted); font-size: 0.82rem; }
-tr.detail td:first-child { padding-left: 22px; }
-td.pre { color: var(--line); }
-tfoot td { border-top: 1px solid var(--fg); border-bottom: 0; font-weight: 500; }
-.caret { display: inline-block; width: 16px; color: var(--muted); transition: transform .15s; }
+tr.detail td { color: var(--muted); font-size: 0.78rem; }
+tr.detail td:first-child { padding-left: 22px; font-weight: 400; }
+td.pre { color: rgba(255, 255, 255, 0.15); }
+tfoot td { border-top: 1px solid var(--accent); border-bottom: 0; color: var(--fg); font-weight: 500; }
+.caret { display: inline-block; width: 16px; color: var(--accent); transition: transform .15s; }
 tr.open .caret { transform: rotate(90deg); }
 
 /* data */
-textarea { width: 100%; min-height: 220px; border: 1px solid var(--line); border-radius: 8px; padding: 14px; background: var(--soft); font-family: var(--mono); font-size: 0.8rem; resize: vertical; }
-pre.format { margin: 0; padding: 14px; border-radius: 8px; background: var(--soft); font-family: var(--mono); font-size: 0.78rem; overflow-x: auto; }
+textarea { width: 100%; min-height: 220px; border: 1px solid var(--line); border-radius: 2px; padding: 14px; background: rgba(0, 0, 0, 0.35); font-family: var(--mono); font-size: 0.78rem; resize: vertical; color: var(--dim); }
+pre.format { margin: 0; padding: 14px; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line); font-family: var(--mono); font-size: 0.75rem; overflow-x: auto; color: var(--dim); }
 .btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.btn { border: 1px solid var(--line); background: transparent; padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 0.88rem; }
-.btn:hover { border-color: var(--fg); }
-.btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn { border: 1px solid var(--line); background: var(--soft); padding: 8px 14px; border-radius: 2px; cursor: pointer; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.btn:hover { border-color: rgba(255, 255, 255, 0.35); }
+.btn.primary { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 16px rgba(255, 138, 42, 0.25); }
 .file-btn { position: relative; overflow: hidden; }
 .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-select { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; }
-.status { font-size: 0.85rem; }
+select { background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line); border-radius: 2px; padding: 6px 10px; font-family: var(--mono); font-size: 0.78rem; }
+.status { font-size: 0.8rem; font-family: var(--mono); }
 .status.err { color: var(--bad); } .status.ok { color: var(--good); }
 
 /* nav */
 .nav {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding-top: 14px; padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
-  padding-left: max(16px, env(safe-area-inset-left, 0px), 6vw); padding-right: max(16px, env(safe-area-inset-right, 0px), 6vw);
-  background: linear-gradient(to top, var(--bg) 60%, transparent);
+  padding-left: max(28px, env(safe-area-inset-left, 0px), 6vw); padding-right: max(16px, env(safe-area-inset-right, 0px), 6vw);
 }
-.nav .where { display: flex; gap: 12px; align-items: baseline; min-width: 0; font-size: 0.85rem; }
-.nav .where b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.nav .where span { color: var(--muted); }
+.nav .where { display: flex; gap: 14px; align-items: baseline; min-width: 0; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav .where b { font-weight: 400; color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav .where span { color: var(--accent); }
 .nav .ctrl { display: flex; gap: 6px; align-items: center; position: relative; }
-.icon { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); cursor: pointer; display: grid; place-items: center; font-size: 1rem; }
-.icon:hover:not(:disabled) { border-color: var(--fg); }
-.icon:disabled { opacity: 0.3; cursor: default; }
-.menu { position: absolute; right: 0; bottom: 48px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 6px; min-width: 230px; max-height: 60vh; overflow-y: auto; box-shadow: 0 12px 32px rgb(0 0 0 / 0.12); }
-.menu button { display: flex; gap: 12px; width: 100%; text-align: left; background: transparent; border: 0; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 0.88rem; }
-.menu button:hover, .menu button[aria-current="true"] { background: var(--soft); }
-.menu button span { color: var(--muted); font-family: var(--mono); font-size: 0.78rem; width: 20px; }
+.icon { width: 38px; height: 38px; border-radius: 2px; border: 1px solid var(--line); background: rgba(5, 7, 12, 0.6); cursor: pointer; display: grid; place-items: center; font-family: var(--mono); font-size: 0.9rem; backdrop-filter: blur(6px); }
+.icon:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.icon:disabled { opacity: 0.25; cursor: default; }
+.menu { position: absolute; right: 0; bottom: 48px; background: rgba(8, 11, 18, 0.96); border: 1px solid var(--line); padding: 6px; min-width: 240px; max-height: 60vh; overflow-y: auto; box-shadow: 0 16px 40px rgb(0 0 0 / 0.5); }
+.menu button { display: flex; gap: 12px; width: 100%; text-align: left; background: transparent; border: 0; padding: 8px 10px; cursor: pointer; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+.menu button:hover, .menu button[aria-current="true"] { background: var(--soft); color: var(--accent); }
+.menu button span { color: var(--muted); font-family: var(--mono); font-size: 0.72rem; width: 20px; font-weight: 400; }
 
-.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); padding: 8px 10px; border-radius: 8px; font-size: 0.78rem; line-height: 1.5; z-index: 20; max-width: 240px; }
-.tip b { font-weight: 500; display: block; margin-bottom: 2px; }
-.tip div { display: flex; justify-content: space-between; gap: 14px; }
+.tip { position: fixed; pointer-events: none; background: rgba(8, 11, 18, 0.95); border: 1px solid rgba(255, 138, 42, 0.45); color: var(--fg); padding: 8px 10px; font-family: var(--mono); font-size: 0.72rem; line-height: 1.6; z-index: 20; max-width: 250px; box-shadow: 0 0 18px rgba(255, 138, 42, 0.15); }
+.tip b { font-weight: 500; display: block; margin-bottom: 2px; color: var(--accent); }
+.tip div { display: flex; justify-content: space-between; gap: 14px; color: var(--dim); }
 .empty { color: var(--muted); padding: 24px 0; }
-@media (prefers-reduced-motion: reduce) { .track, .progress span { transition: none; } .slide.enter .seg, .slide.enter .bar-h > span { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .track, .progress span { transition: none; } .slide.enter .bar, .slide.enter .refl, .slide.enter .bar-h > span { animation: none; } }
 </style>
 
 <main class="deck" id="deck">
+  <div class="floor" aria-hidden="true"></div>
   <div class="progress"><span id="prog"></span></div>
   <div class="track" id="track"></div>
+  <div class="source" id="source"></div>
   <nav class="nav" aria-label="Slides">
-    <div class="where"><span class="num" id="count"></span><b id="where"></b></div>
+    <div class="where"><span id="count"></span><b id="where"></b></div>
     <div class="ctrl">
       <button class="icon" id="menuBtn" type="button" aria-label="All slides" aria-expanded="false">≡</button>
       <button class="icon" id="prevBtn" type="button" aria-label="Previous slide">←</button>
@@ -235,7 +252,7 @@ const SAMPLE = {
 
 const STORE_KEY = "fragrance-sales-data-v1";
 const $ = id => document.getElementById(id);
-const color = i => `var(--c${(i % 6) + 1})`;
+const color = i => typeof i === "number" ? `var(--c${(i % 6) + 1})` : i;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 function loadSaved() { try { const r = localStorage.getItem(STORE_KEY); return r ? JSON.parse(r) : null; } catch { return null; } }
@@ -258,8 +275,7 @@ const secTotal = (i, yf = () => true) => data.launches.reduce((t, l) => t + laun
 const grand = () => data.launches.reduce((t, l) => t + launchTotal(l), 0);
 
 function short(n) {
-  const a = Math.abs(n);
-  const d = x => String(Number(x.toFixed(2)));
+  const a = Math.abs(n), d = x => String(Number(x.toFixed(2)));
   return a >= 1e9 ? d(n / 1e9) + "B" : a >= 1e6 ? d(n / 1e6) + "M" : a >= 1e3 ? Math.round(n / 1e3) + "K" : String(Math.round(n));
 }
 const fmt = n => `${data.currency} ${short(n)}`;
@@ -267,7 +283,8 @@ const full = n => `${data.currency} ${Math.round(n).toLocaleString("en-US")}`;
 const money = n => `<span class="cur">${esc(data.currency)}</span>${short(n)}`;
 const pct = x => (x * 100).toFixed(1) + "%";
 const delta = (cur, prev) => prev ? (cur - prev) / prev : null;
-const deltaHTML = d => d == null ? `<span class="hint">first year</span>` : `<span class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "↑" : "↓"} ${pct(Math.abs(d))}</span>`;
+const deltaHTML = d => d == null ? `<span class="hint">first year</span>` : `<span class="num ${d >= 0 ? "up" : "down"}">${d >= 0 ? "▲" : "▼"} ${pct(Math.abs(d))}</span>`;
+const two = n => String(n).padStart(2, "0");
 function niceMax(v) {
   if (v <= 0) return 1;
   const p = Math.pow(10, Math.floor(Math.log10(v))), m = v / p;
@@ -275,74 +292,101 @@ function niceMax(v) {
 }
 
 /* ---------- shared pieces ---------- */
+const tag = (k, label) => `<span class="tag"><i>[${two(k)}]</i> ${label}</span>`;
 const legend = () => `<div class="chips" role="group" aria-label="Sections">${data.sections.map((s, i) =>
-  `<button class="chip sec" type="button" data-act="sec" data-i="${i}" aria-pressed="${!state.off.has(i)}"><span class="dot" style="background:${color(i)}"></span>${esc(s)}</button>`).join("")}</div>`;
+  `<button class="chip sec" type="button" data-act="sec" data-i="${i}" aria-pressed="${!state.off.has(i)}"><span class="dot" style="background:${color(i)};color:${color(i)}"></span>${esc(s)}</button>`).join("")}</div>`;
 const yearChips = (act, sel) => `<div class="chips" role="group" aria-label="Year">${["all", ...years()].map(y =>
-  `<button class="chip year" type="button" data-act="${act}" data-y="${y}" aria-pressed="${String(sel) === String(y)}">${y === "all" ? "All years" : y}</button>`).join("")}</div>`;
+  `<button class="chip year" type="button" data-act="${act}" data-y="${y}" aria-pressed="${String(sel) === String(y)}">${y === "all" ? "All" : y}</button>`).join("")}</div>`;
 
-/* stacked column chart; cols = [{ key, label, parts: [[secIndex, value]] }] */
-function columns(cols, { sel = null, H = 340, act = null } = {}) {
-  const W = 720, m = { t: 28, r: 8, b: 32, l: 52 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+/* Glass bar chart.
+   cols = [{ key, label, parts: [[secIndex | cssColor, value]], top?: [valueText, nameText] }]
+   Segments are translucent glass with lit edges; a glowing cap sits on top and a fading reflection below the floor line. */
+let uid = 0;
+function glass(cols, { sel = null, H = 340, act = null, axis = true } = {}) {
+  const id = "g" + (++uid);
+  const W = 720, labelRoom = cols.some(c => c.top) ? 74 : 26;
+  const m = { t: labelRoom, r: 8, b: axis ? 52 : 34, l: axis ? 46 : 8 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
   const sums = cols.map(c => c.parts.reduce((t, p) => t + p[1], 0));
   const max = niceMax(Math.max(0, ...sums));
   const y = v => m.t + ih - (v / max) * ih;
-  const band = iw / Math.max(cols.length, 1), bw = Math.min(58, band * 0.52);
+  const base = m.t + ih;
+  const band = iw / Math.max(cols.length, 1), bw = Math.min(70, band * 0.62);
+  const keys = [...new Set(cols.flatMap(c => c.parts.map(p => String(p[0]))))];
+  const gid = k => `${id}-${keys.indexOf(String(k))}`;
+  let defs = `<filter id="${id}-glow" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <radialGradient id="${id}-pool" cx="50%" cy="50%" r="50%"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></radialGradient>`;
+  keys.forEach(k => {
+    const c = color(isNaN(k) ? k : Number(k));
+    defs += `<linearGradient id="${gid(k)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${c};stop-opacity:.10"/><stop offset="1" style="stop-color:${c};stop-opacity:.55"/></linearGradient>
+      <linearGradient id="${gid(k)}-r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${c};stop-opacity:.32"/><stop offset="1" style="stop-color:${c};stop-opacity:0"/></linearGradient>`;
+  });
   let g = "";
-  [0, 0.5, 1].forEach(f => g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${y(max * f)}" y2="${y(max * f)}"/><text x="${m.l - 10}" y="${y(max * f) + 4}" text-anchor="end">${short(max * f)}</text>`);
+  if (axis) [0.5, 1].forEach(f => g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${y(max * f)}" y2="${y(max * f)}"/><text x="${m.l - 8}" y="${y(max * f) + 3}" text-anchor="end">${short(max * f)}</text>`);
+  g += `<line class="base" x1="${m.l}" x2="${W - m.r}" y1="${base}" y2="${base}"/>`;
   cols.forEach((c, k) => {
-    const x = m.l + band * k + (band - bw) / 2;
-    let acc = 0, segs = "";
+    const x = m.l + band * k + (band - bw) / 2, cx = x + bw / 2;
+    const cls = sel == null ? "" : String(sel) === String(c.key) ? " sel" : " dim";
+    let acc = 0, segs = "", topKey = null;
     c.parts.forEach(([i, v]) => {
       if (!v) return;
-      segs += `<rect class="seg" x="${x}" y="${y(acc + v)}" width="${bw}" height="${y(acc) - y(acc + v)}" fill="${color(i)}" style="animation-delay:${k * 70}ms"/>`;
-      acc += v;
+      const y0 = y(acc), y1 = y(acc + v), col = color(i);
+      segs += `<rect x="${x}" y="${y1}" width="${bw}" height="${y0 - y1}" fill="url(#${gid(i)})" stroke="${col}" stroke-opacity=".75" stroke-width="1"/>
+        <line x1="${x + 3}" x2="${x + 3}" y1="${y1 + 2}" y2="${y0 - 2}" stroke="${col}" stroke-opacity=".5" stroke-width="1"/>`;
+      acc += v; topKey = i;
     });
-    const tip = [`${c.label} · ${fmt(sums[k])}`, ...c.parts.filter(p => p[1]).map(([i, v]) => `${data.sections[i]}~${short(v)}`)].join("|");
-    const cls = sel == null ? "" : String(sel) === String(c.key) ? " sel" : " dim";
-    g += `<g class="col${cls}">${segs}<text class="tot" x="${x + bw / 2}" y="${y(acc) - 8}" text-anchor="middle">${acc ? short(acc) : ""}</text>
-      <text class="yl" x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${esc(c.label)}</text>
-      <rect class="hit" x="${m.l + band * k}" y="${m.t}" width="${band}" height="${ih + m.b}" data-tip="${esc(tip)}"${act ? ` data-act="${act}" data-y="${c.key}"` : ""}/></g>`;
+    const h = base - y(acc), rh = Math.min(h * 0.35, 34);
+    const topCol = topKey == null ? "transparent" : color(topKey);
+    const bottomKey = c.parts.find(p => p[1])?.[0];
+    let el = `<ellipse cx="${cx}" cy="${base + 2}" rx="${bw * 0.95}" ry="10" fill="url(#${id}-pool)" class="refl"/>`;
+    if (acc) el += `<g class="bar" style="animation-delay:${k * 80}ms">${segs}<rect x="${x - 1}" y="${y(acc) - 1.5}" width="${bw + 2}" height="3" fill="${topCol}" filter="url(#${id}-glow)"/></g>
+      <rect class="refl" x="${x}" y="${base + 3}" width="${bw}" height="${rh}" fill="url(#${gid(bottomKey)}-r)"/>`;
+    if (c.top) {
+      const words = String(c.top[1]).toUpperCase().split(/\s+/);
+      const ty = y(acc) - 14 - (words.length - 1) * 12;
+      el += `<text class="v" x="${cx}" y="${ty - 18}" text-anchor="middle">${esc(c.top[0])}</text><text class="n" x="${cx}" y="${ty}" text-anchor="middle">${words.map((w, n) => `<tspan x="${cx}" dy="${n ? 12 : 0}">${esc(w)}</tspan>`).join("")}</text>`;
+    } else if (acc) el += `<text class="v" x="${cx}" y="${y(acc) - 12}" text-anchor="middle" style="font-size:16px">${short(acc)}</text>`;
+    if (axis) el += `<text class="yl" x="${cx}" y="${base + rh + 16 > H - 4 ? H - 4 : base + 46}" text-anchor="middle">${esc(c.label)}</text>`;
+    const tip = [`${c.label} · ${fmt(sums[k])}`, ...c.parts.filter(p => p[1] && typeof p[0] === "number").map(([i, v]) => `${data.sections[i]}~${short(v)}`)].join("|");
+    el += `<rect class="hit" x="${m.l + band * k}" y="0" width="${band}" height="${H}" data-tip="${esc(tip)}"${act ? ` data-act="${act}" data-y="${c.key}"` : ""}/>`;
+    g += `<g class="col${cls}">${el}</g>`;
   });
-  return cols.length ? `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Stacked column chart">${g}</svg>` : `<p class="empty">No data yet.</p>`;
+  return cols.length ? `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Bar chart"><defs>${defs}</defs>${g}</svg>` : `<p class="empty">No data yet.</p>`;
 }
 const stackBar = parts => {
   const t = parts.reduce((a, p) => a + p[1], 0);
-  return parts.filter(p => p[1]).map(([i, v], k) => `<span style="flex:${v / t};background:${color(i)};animation-delay:${k * 60}ms"></span>`).join("");
+  return parts.filter(p => p[1]).map(([i, v], k) => `<span style="flex:${v / t};background:${color(i)};color:${color(i)};animation-delay:${k * 60}ms"></span>`).join("");
 };
 
 /* ---------- slides ---------- */
-function cover() {
-  const ys = years();
-  return `<div class="inner cover">
-    <div style="display:grid;gap:20px">
-      <span class="eyebrow">Sales review · ${ys[0] ?? ""}–${ys[ys.length - 1] ?? ""}</span>
-      <h1>Fragrance<br>Launch Sales</h1>
-      <p class="lead">${data.launches.length} perfume launches, ${data.sections.length} sales sections, every year side by side.</p>
-      <span class="pill${usingOwn ? " own" : ""}">${usingOwn ? "Your data, loaded in this browser" : "Sample figures · load your data on the last slide"}</span>
-    </div>
-    <div class="cover-foot">
-      <div style="display:grid;gap:6px"><span class="eyebrow">Total sales, all years</span><span class="big">${money(grand())}</span></div>
-      <span class="hint">Press <span class="kbd">→</span> or swipe to begin</span>
+function cover(k) {
+  const ys = years(), g = grand();
+  const ranked = [...data.launches].map(l => [l, launchTotal(l)]).sort((a, b) => a[1] - b[1]);
+  const cols = ranked.map(([l, v], n) => ({ key: l.name, label: l.name, parts: [[n === ranked.length - 1 ? "var(--hero)" : "var(--accent)", v]], top: [g ? pct(v / g) : "0%", l.name] }));
+  return `<div class="inner">
+    <div class="ruled center"><h1>Fragrance Launch Sales</h1><p class="cap">Distribution of total sales by perfume launch, ${ys[0] ?? ""}–${ys[ys.length - 1] ?? ""}</p></div>
+    <div style="max-width:980px;width:100%;justify-self:center">${glass(cols, { H: 380, axis: false })}</div>
+    <div class="head" style="justify-content:center;gap:12px 40px;text-align:center">
+      <span class="tag">Total <i>${full(g)}</i></span><span class="tag">${data.launches.length} launches · ${data.sections.length} sections</span><span class="tag">Press <i>→</i> or swipe</span>
     </div></div>`;
 }
 
-function glance() {
+function glance(k) {
   const ys = years(), last = ys[ys.length - 1], prev = ys[ys.length - 2];
   const cur = yearTotal(last), d = delta(cur, prev != null ? yearTotal(prev) : 0);
   const best = [...data.launches].sort((a, b) => launchTotal(b) - launchTotal(a))[0];
   const top = secs().map(i => [i, secTotal(i)]).sort((a, b) => b[1] - a[1])[0];
   const g = grand(), newest = data.launches.filter(l => l.launched === last);
   return `<div class="inner">
-    <div class="head"><div><span class="eyebrow">At a glance</span><h2>The portfolio in four numbers</h2></div></div>
+    <div class="ruled">${tag(k, "At a glance")}<h2>The portfolio in four numbers</h2></div>
     <div class="stats">
-      <div class="stat"><span class="eyebrow">Total sales</span><span class="mid">${money(g)}</span><span class="note">${ys.length} years · ${full(g)}</span></div>
-      <div class="stat"><span class="eyebrow">${last}</span><span class="mid">${money(cur)}</span><span class="note">${deltaHTML(d)} vs ${prev ?? "—"}</span></div>
-      <div class="stat"><span class="eyebrow">Best launch</span><span class="mid">${best ? esc(best.name) : "—"}</span><span class="note">${best ? `${fmt(launchTotal(best))} · ${pct(launchTotal(best) / (g || 1))} of total` : ""}</span></div>
-      <div class="stat"><span class="eyebrow">Top section</span><span class="mid">${top ? esc(data.sections[top[0]]) : "—"}</span><span class="note">${top ? `${pct(top[1] / (g || 1))} of sales · ${newest.length} new launch${newest.length === 1 ? "" : "es"} in ${last}` : ""}</span></div>
+      <div class="stat"><span class="tag">Total sales</span><span class="thin mid">${money(g)}</span><span class="note">${ys.length} yrs · ${full(g)}</span></div>
+      <div class="stat"><span class="tag">${last}</span><span class="thin mid">${money(cur)}</span><span class="note">${deltaHTML(d)} vs ${prev ?? "—"}</span></div>
+      <div class="stat"><span class="tag">Best launch</span><span class="name">${best ? esc(best.name) : "—"}</span><span class="note">${best ? `${fmt(launchTotal(best))} · ${pct(launchTotal(best) / (g || 1))}` : ""}</span></div>
+      <div class="stat"><span class="tag">Top section</span><span class="name">${top ? esc(data.sections[top[0]]) : "—"}</span><span class="note">${top ? `${pct(top[1] / (g || 1))} of sales · ${newest.length} new in ${last}` : ""}</span></div>
     </div></div>`;
 }
 
-function yearSlide() {
+function yearSlide(k) {
   const ys = years();
   if (state.ovYear == null || !ys.includes(Number(state.ovYear))) state.ovYear = ys[ys.length - 1];
   const sy = Number(state.ovYear), prev = ys[ys.indexOf(sy) - 1];
@@ -350,34 +394,34 @@ function yearSlide() {
   const cols = ys.map(y => ({ key: y, label: String(y), parts: secs().map(i => [i, data.launches.reduce((t, l) => t + val(l, y, i), 0)]) }));
   const contrib = data.launches.map(l => [l, launchYear(l, sy)]).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
   return `<div class="inner">
-    <div class="head"><div><span class="eyebrow">Sales per year</span><h2>Growth year by year</h2></div>${legend()}</div>
+    <div class="head"><div class="ruled">${tag(k, "Sales per year")}<h2>Growth year by year</h2></div>${legend()}</div>
     <div class="two">
-      <div>${columns(cols, { sel: sy, act: "ovYear" })}<p class="hint" style="margin:8px 0 0">Click a year to see its breakdown.</p></div>
+      <div>${glass(cols, { sel: sy, act: "ovYear", H: 360 })}<p class="hint" style="margin:6px 0 0">› Select a year for its breakdown</p></div>
       <div class="panel">
-        <div style="display:grid;gap:6px"><span class="eyebrow">${sy}</span><span class="big">${money(cur)}</span><span>${deltaHTML(d)} <span class="hint">vs ${prev ?? "previous year"}</span></span></div>
-        <div class="kv">${contrib.map(([l, v]) => `<div><span>${esc(l.name)}${l.launched === sy ? ' <span class="pill" style="padding:0 8px">new</span>' : ""}</span><span class="num">${short(v)}</span></div>`).join("")}</div>
+        <div style="display:grid;gap:10px"><span class="tag">FY <i>${sy}</i></span><span class="thin big">${money(cur)}</span><span>${deltaHTML(d)} <span class="hint">vs ${prev ?? "previous year"}</span></span></div>
+        <div class="kv">${contrib.map(([l, v]) => `<div><span>${esc(l.name)}${l.launched === sy ? ' <span class="new">NEW</span>' : ""}</span><span>${short(v)}</span></div>`).join("")}</div>
       </div>
     </div></div>`;
 }
 
-function sectionSlide() {
+function sectionSlide(k) {
   const yf = inYear(state.splitYear);
   const rows = data.sections.map((s, i) => [i, secTotal(i, yf)]);
   const total = rows.filter(r => !state.off.has(r[0])).reduce((t, r) => t + r[1], 0);
   const max = Math.max(1, ...rows.map(r => r[1]));
   return `<div class="inner">
-    <div class="head"><div><span class="eyebrow">Sections</span><h2>Where the sales come from</h2></div>${yearChips("splitYear", state.splitYear)}</div>
+    <div class="head"><div class="ruled">${tag(k, "Sections")}<h2>Where the sales come from</h2></div>${yearChips("splitYear", state.splitYear)}</div>
     <div class="rows">${rows.sort((a, b) => b[1] - a[1]).map(([i, v]) => {
       const off = state.off.has(i);
       return `<div class="row${off ? " off" : ""}">
-        <button class="chip sec" type="button" data-act="sec" data-i="${i}" aria-pressed="${!off}" style="justify-self:start"><span class="dot" style="background:${color(i)}"></span>${esc(data.sections[i])}</button>
-        <div class="bar-h"><span style="width:${(v / max) * 100}%;background:${color(i)}"></span></div>
-        <div class="val"><span class="share num">${off || !total ? "—" : pct(v / total)}</span><small class="num">${fmt(v)}</small></div></div>`;
+        <button class="chip sec" type="button" data-act="sec" data-i="${i}" aria-pressed="${!off}" style="justify-self:start"><span class="dot" style="background:${color(i)};color:${color(i)}"></span>${esc(data.sections[i])}</button>
+        <div class="bar-h"><span style="width:${(v / max) * 100}%;background:${color(i)};color:${color(i)}"></span></div>
+        <div class="val"><span class="share thin">${off || !total ? "—" : pct(v / total)}</span><small>${fmt(v)}</small></div></div>`;
     }).join("")}</div>
-    <p class="hint" style="margin:0">Click a section to leave it out of every slide. Share is of the sections shown.</p></div>`;
+    <p class="hint" style="margin:0">› Toggle a section to remove it from every slide · share is of sections shown</p></div>`;
 }
 
-function launchSlide(l, k) {
+function launchSlide(l, n, k) {
   const ys = years().filter(y => y >= l.launched);
   const tot = launchTotal(l), g = grand();
   const byYear = ys.map(y => [y, launchYear(l, y)]);
@@ -388,83 +432,82 @@ function launchSlide(l, k) {
   return `<div class="inner">
     <div class="two rev">
       <div class="panel">
-        <span class="eyebrow">Launch ${k + 1} of ${data.launches.length} · launched ${l.launched}</span>
-        <h2 style="font-size:clamp(2.2rem,4.6vw,3.6rem);font-weight:300;letter-spacing:-0.03em">${esc(l.name)}</h2>
-        <div style="display:grid;gap:6px"><span class="eyebrow">Sales to date</span><span class="big">${money(tot)}</span></div>
+        <div class="ruled">${tag(k, `Launch ${two(n + 1)}/${two(data.launches.length)} · est. ${l.launched}`)}<h2 style="font-size:clamp(1.8rem,3.8vw,2.9rem)">${esc(l.name)}</h2></div>
+        <div style="display:grid;gap:8px"><span class="tag">Sales to date</span><span class="thin big">${money(tot)}</span></div>
         <div class="kv">
-          <div><span>Share of portfolio</span><span class="num">${pct(tot / (g || 1))}</span></div>
-          <div><span>Best year</span><span class="num">${bestY ? `${bestY[0]} · ${short(bestY[1])}` : "—"}</span></div>
-          <div><span>Latest year</span><span class="num">${last ? `${last[0]} · ${short(last[1])} ` : "—"}${last && prev ? deltaHTML(delta(last[1], prev[1])) : ""}</span></div>
-          ${top.map(([i, v]) => `<div><span><span class="dot" style="background:${color(i)}"></span>${esc(data.sections[i])}</span><span class="num">${short(v)} · ${pct(v / (tot || 1))}</span></div>`).join("")}
+          <div><span>Share of portfolio</span><span>${pct(tot / (g || 1))}</span></div>
+          <div><span>Best year</span><span>${bestY ? `${bestY[0]} · ${short(bestY[1])}` : "—"}</span></div>
+          <div><span>Latest year</span><span>${last ? `${last[0]} · ${short(last[1])} ` : "—"}${last && prev ? deltaHTML(delta(last[1], prev[1])) : ""}</span></div>
+          ${top.map(([i, v]) => `<div><span><span class="dot" style="background:${color(i)};color:${color(i)}"></span>${esc(data.sections[i])}</span><span>${short(v)} · ${pct(v / (tot || 1))}</span></div>`).join("")}
         </div>
       </div>
-      <div style="display:grid;gap:16px;min-width:0">${legend()}${columns(cols, { H: 360 })}</div>
+      <div style="display:grid;gap:16px;min-width:0">${legend()}${glass(cols, { H: 380 })}</div>
     </div></div>`;
 }
 
-function rankSlide() {
+function rankSlide(k) {
   const yf = inYear(state.rankYear);
   const r = data.launches.map(l => ({ l, t: launchTotal(l, yf), parts: secs().map(i => [i, launchSec(l, i, yf)]) })).sort((a, b) => b.t - a.t);
   const max = Math.max(1, ...r.map(x => x.t)), tot = r.reduce((a, x) => a + x.t, 0);
   return `<div class="inner">
-    <div class="head"><div><span class="eyebrow">Ranking</span><h2>Which launches sell most</h2></div>${yearChips("rankYear", state.rankYear)}</div>
+    <div class="head"><div class="ruled">${tag(k, "Ranking")}<h2>Which launches sell most</h2></div>${yearChips("rankYear", state.rankYear)}</div>
     <div class="rows">${r.map((x, n) => `<div class="row">
-      <div class="name"><span class="num hint">${n + 1}</span><span>${esc(x.l.name)} <small>· ${x.l.launched}</small></span></div>
+      <div class="name"><span class="num" style="color:var(--accent);font-size:.75rem">${two(n + 1)}</span><span class="lbl">${esc(x.l.name)} <small>${x.l.launched}</small></span></div>
       <div class="bar-h" style="width:${(x.t / max) * 100}%" data-tip="${esc([`${x.l.name} · ${fmt(x.t)}`, ...x.parts.filter(p => p[1]).map(([i, v]) => `${data.sections[i]}~${short(v)}`)].join("|"))}">${x.t ? stackBar(x.parts) : ""}</div>
-      <div class="val"><span class="num">${x.t ? short(x.t) : "not on sale"}</span><small class="num">${x.t ? pct(x.t / (tot || 1)) : ""}</small></div></div>`).join("")}</div>
+      <div class="val"><span class="share thin">${x.t ? pct(x.t / (tot || 1)) : "—"}</span><small>${x.t ? fmt(x.t) : "not on sale"}</small></div></div>`).join("")}</div>
     ${legend()}</div>`;
 }
 
-function tableSlide() {
+function tableSlide(k) {
   const ys = years();
   const rows = data.launches.map(l => ({ l, by: ys.map(y => launchYear(l, y)), total: launchTotal(l) }));
   const g = rows.reduce((t, r) => t + r.total, 0);
   const { key, dir } = state.sort;
   const pick = r => key === "name" ? r.l.name : key === "launched" ? r.l.launched : key === "total" ? r.total : r.by[ys.indexOf(Number(key))];
   rows.sort((a, b) => (pick(a) > pick(b) ? 1 : pick(a) < pick(b) ? -1 : 0) * dir);
-  const th = (k, label) => { const on = key === String(k); return `<th data-act="sort" data-k="${k}"${on ? ` aria-sort="${dir > 0 ? "ascending" : "descending"}"` : ""}>${label}${on ? (dir > 0 ? " ↑" : " ↓") : ""}</th>`; };
-  let h = `<thead><tr>${th("name", "Perfume")}${th("launched", "Launched")}${ys.map(y => th(y, y)).join("")}${th("total", "Total")}<th>Share</th></tr></thead><tbody>`;
+  const th = (key2, label) => { const on = key === String(key2); return `<th data-act="sort" data-k="${key2}"${on ? ` aria-sort="${dir > 0 ? "ascending" : "descending"}"` : ""}>${label}${on ? (dir > 0 ? " ↑" : " ↓") : ""}</th>`; };
+  let h = `<thead><tr>${th("name", "Perfume")}${th("launched", "Est.")}${ys.map(y => th(y, y)).join("")}${th("total", "Total")}<th>Share</th></tr></thead><tbody>`;
   rows.forEach(r => {
     const open = state.open.has(r.l.name);
-    h += `<tr class="main${open ? " open" : ""}" data-act="row" data-name="${esc(r.l.name)}" tabindex="0" aria-expanded="${open}"><td><span class="caret">▸</span>${esc(r.l.name)}</td><td class="num">${r.l.launched}</td>
-      ${r.by.map((v, k) => ys[k] < r.l.launched ? `<td class="num pre">–</td>` : `<td class="num">${short(v)}</td>`).join("")}<td class="num"><b style="font-weight:500">${short(r.total)}</b></td><td class="num">${pct(r.total / (g || 1))}</td></tr>`;
+    h += `<tr class="main${open ? " open" : ""}" data-act="row" data-name="${esc(r.l.name)}" tabindex="0" aria-expanded="${open}"><td><span class="caret">›</span>${esc(r.l.name)}</td><td>${r.l.launched}</td>
+      ${r.by.map((v, j) => ys[j] < r.l.launched ? `<td class="pre">—</td>` : `<td>${short(v)}</td>`).join("")}<td style="color:var(--fg)">${short(r.total)}</td><td style="color:var(--accent)">${pct(r.total / (g || 1))}</td></tr>`;
     if (open) secs().forEach(i => {
       const v = ys.map(y => val(r.l, y, i));
-      h += `<tr class="detail"><td><span class="dot" style="background:${color(i)};margin-right:8px"></span>${esc(data.sections[i])}</td><td></td>${v.map((x, k) => `<td class="num">${ys[k] < r.l.launched ? "–" : short(x)}</td>`).join("")}<td class="num">${short(v.reduce((a, b) => a + b, 0))}</td><td></td></tr>`;
+      h += `<tr class="detail"><td><span class="dot" style="background:${color(i)};color:${color(i)};margin-right:10px"></span>${esc(data.sections[i])}</td><td></td>${v.map((x, j) => `<td>${ys[j] < r.l.launched ? "—" : short(x)}</td>`).join("")}<td>${short(v.reduce((a, b) => a + b, 0))}</td><td></td></tr>`;
     });
   });
-  h += `</tbody><tfoot><tr><td>All launches</td><td></td>${ys.map(y => `<td class="num">${short(yearTotal(y))}</td>`).join("")}<td class="num">${short(g)}</td><td class="num">100%</td></tr></tfoot>`;
+  h += `</tbody><tfoot><tr><td>All launches</td><td></td>${ys.map(y => `<td>${short(yearTotal(y))}</td>`).join("")}<td>${short(g)}</td><td>100%</td></tr></tfoot>`;
   return `<div class="inner">
-    <div class="head"><div><span class="eyebrow">All figures · ${esc(data.currency)}</span><h2>Launch by year</h2></div><span class="hint">Click a perfume for its sections · click a header to sort</span></div>
+    <div class="head"><div class="ruled">${tag(k, `All figures · ${esc(data.currency)}`)}<h2>Launch by year</h2></div><span class="hint">› Row: section split · header: sort</span></div>
     <div class="table-wrap"><table>${h}</table></div></div>`;
 }
 
-function dataSlide() {
+function dataSlide(k) {
   if (state.draft == null) state.draft = toCSV(data);
   const st = state.status;
   return `<div class="inner">
-    <div class="head"><div><span class="eyebrow">Your data</span><h2>Bring your own numbers</h2><p class="lead">Paste rows from Excel or a CSV, or upload a file. The whole deck rebuilds from them. Data stays in this browser.</p></div></div>
-    <div class="two">
+    <div class="ruled">${tag(k, "Your data")}<h2>Bring your own numbers</h2><p class="cap" style="font-size:clamp(.85rem,1.4vw,1.05rem)">Paste rows from Excel or a CSV, or upload a file. The deck rebuilds from them. Data stays in this browser.</p></div>
+    <div class="two" style="align-items:start">
       <div style="display:grid;gap:12px;min-width:0">
-        <label class="eyebrow" for="csvIn">Sales rows</label>
+        <label class="tag" for="csvIn">Input · sales rows</label>
         <textarea id="csvIn" spellcheck="false">${esc(state.draft)}</textarea>
         <div class="btns">
           <button class="btn primary" type="button" data-act="apply">Apply data</button>
           <span class="btn file-btn">Upload .csv<input type="file" id="fileIn" accept=".csv,.txt,text/csv" aria-label="Upload CSV file"></span>
-          <button class="btn" type="button" data-act="reset">Back to sample</button>
-          <button class="btn" type="button" data-act="copy">Copy as CSV</button>
+          <button class="btn" type="button" data-act="reset">Sample</button>
+          <button class="btn" type="button" data-act="copy">Copy CSV</button>
         </div>
         <span class="status ${st ? st.kind : ""}" role="status">${st ? esc(st.msg) : ""}</span>
       </div>
       <div class="panel">
-        <span class="eyebrow">Format · one row per perfume, year and section</span>
+        <span class="tag">Schema · one row per perfume / year / section</span>
         <pre class="format">perfume,launch_year,year,section,sales
 Amber Nuit,2021,2021,Retail stores,420000
 Amber Nuit,2021,2021,Duty free,185000
 Amber Nuit,2021,2022,Retail stores,610000</pre>
-        <label style="display:flex;gap:10px;align-items:center"><span class="eyebrow">Currency</span>
+        <label style="display:flex;gap:10px;align-items:center"><span class="tag">Currency</span>
           <select id="curSel">${["AED", "USD", "SAR", "EUR", "GBP", "INR"].map(c => `<option${c === data.currency ? " selected" : ""}>${c}</option>`).join("")}</select></label>
-        <p class="hint" style="margin:0">Sections and years are read from your rows, up to six sections. Sales can be revenue or units.</p>
+        <p class="hint" style="margin:0">Sections and years are read from your rows (max 6 sections). Sales may be revenue or units.</p>
       </div>
     </div></div>`;
 }
@@ -474,7 +517,7 @@ const deck = () => [
   { title: "At a glance", render: glance },
   { title: "Sales per year", render: yearSlide },
   { title: "Sections", render: sectionSlide },
-  ...data.launches.map((l, k) => ({ title: l.name, render: () => launchSlide(l, k) })),
+  ...data.launches.map((l, n) => ({ title: l.name, render: k => launchSlide(l, n, k) })),
   { title: "Ranking", render: rankSlide },
   { title: "All figures", render: tableSlide },
   { title: "Your data", render: dataSlide }
@@ -488,8 +531,9 @@ function render() {
   list = deck();
   state.idx = Math.min(state.idx, list.length - 1);
   track.classList.add("instant");
-  track.innerHTML = list.map((s, k) => `<section class="slide" aria-roledescription="slide" aria-label="${esc(s.title)}">${s.render()}</section>`).join("");
+  track.innerHTML = list.map((s, k) => `<section class="slide" aria-roledescription="slide" aria-label="${esc(s.title)}">${s.render(k + 1)}</section>`).join("");
   [...track.children].forEach((s, k) => { s.scrollTop = scroll[k] || 0; });
+  $("source").innerHTML = `Source: <b>${usingOwn ? "your data" : "sample figures"}</b>`;
   place();
   track.offsetWidth;
   track.classList.remove("instant");
@@ -498,11 +542,11 @@ function place() {
   track.style.transform = `translateX(${-state.idx * 100}%)`;
   [...track.children].forEach((s, k) => s.inert = k !== state.idx);
   $("prog").style.width = `${((state.idx + 1) / list.length) * 100}%`;
-  $("count").textContent = `${String(state.idx + 1).padStart(2, "0")} / ${String(list.length).padStart(2, "0")}`;
+  $("count").textContent = `${two(state.idx + 1)}/${two(list.length)}`;
   $("where").textContent = list[state.idx].title;
   $("prevBtn").disabled = state.idx === 0;
   $("nextBtn").disabled = state.idx === list.length - 1;
-  $("menu").innerHTML = list.map((s, k) => `<button type="button" data-go="${k}" aria-current="${k === state.idx}"><span>${String(k + 1).padStart(2, "0")}</span>${esc(s.title)}</button>`).join("");
+  $("menu").innerHTML = list.map((s, k) => `<button type="button" data-go="${k}" aria-current="${k === state.idx}"><span>${two(k + 1)}</span>${esc(s.title)}</button>`).join("");
 }
 function go(i) {
   i = Math.max(0, Math.min(list.length - 1, i));
@@ -510,7 +554,7 @@ function go(i) {
   state.idx = i; place();
   const s = track.children[i];
   s.classList.remove("enter"); s.offsetWidth; s.classList.add("enter");
-  setTimeout(() => s.classList.remove("enter"), 1400);
+  setTimeout(() => s.classList.remove("enter"), 1600);
   try { localStorage.setItem(STORE_KEY + "-slide", i); } catch {}
 }
 
@@ -624,7 +668,7 @@ document.addEventListener("mousemove", e => {
   const t = e.target.closest("[data-tip]");
   if (!t) { tip.hidden = true; return; }
   const [head, ...rest] = t.dataset.tip.split("|");
-  tip.innerHTML = `<b>${esc(head)}</b>` + rest.map(r => { const [a, b] = r.split("~"); return `<div><span>${esc(a)}</span><span class="num">${esc(b)}</span></div>`; }).join("");
+  tip.innerHTML = `<b>${esc(head)}</b>` + rest.map(r => { const [a, b] = r.split("~"); return `<div><span>${esc(a)}</span><span>${esc(b)}</span></div>`; }).join("");
   tip.hidden = false;
   tip.style.left = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8) + "px";
   tip.style.top = Math.min(e.clientY + 14, innerHeight - tip.offsetHeight - 8) + "px";
